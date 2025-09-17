@@ -1,10 +1,10 @@
-package com.gitlab.xogus9107.task_management_k8s;
+package com.example.task_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TaskManagementK8sApplicationTests {
+class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {

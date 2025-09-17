@@ -1,13 +1,13 @@
-package com.gitlab.xogus9107.task_management_k8s;
+package com.example.task_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TaskManagementK8sApplication {
+public class DemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskManagementK8sApplication.class, args);
+		SpringApplication.run(DemoApplication.class, args);
 	}
 
 }
