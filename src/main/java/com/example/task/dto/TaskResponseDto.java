@@ -4,7 +4,14 @@ import com.example.task.entity.Task;
 import com.example.task.entity.TaskStatus;
 import java.time.LocalDateTime;
 
-// 클라이언트에게 Task 정보를 응답할 때 사용하는 DTO
+/**
+ * 서버가 클라이언트에게 Task 정보를 응답할 때 사용하는 DTO 클래스입니다.
+ * <p>
+ * 엔티티 객체를 직접 반환하는 대신 이 DTO를 사용하면,
+ * API 응답에 포함될 정보만을 선택적으로 가공하여 전달할 수 있습니다.
+ * (예: 민감한 정보 제외, 필요한 정보 추가)
+ * </p>
+ */
 public class TaskResponseDto {
     private Long id;
     private String title;
@@ -12,11 +19,17 @@ public class TaskResponseDto {
     private TaskStatus status;
     private Integer priority;
     private String assignee;
-    private Long viewCount; // 조회수 필드 추가
+    private Long viewCount; // Redis에서 가져온 조회수 정보
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Entity와 viewCount를 받아 DTO를 생성하는 생성자
+    /**
+     * Task 엔티티와 조회수 정보를 받아 DTO 객체를 생성하는 생성자입니다.
+     * 서비스 계층에서 DB 정보와 Redis 정보를 조합하여 이 객체를 만듭니다.
+     *
+     * @param task      데이터베이스에서 조회한 Task 엔티티 객체
+     * @param viewCount Redis에서 조회한 해당 Task의 조회수
+     */
     public TaskResponseDto(Task task, Long viewCount) {
         this.id = task.getId();
         this.title = task.getTitle();
@@ -28,7 +41,7 @@ public class TaskResponseDto {
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
     }
-
+    
     // --- Getters and Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -49,3 +62,4 @@ public class TaskResponseDto {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
+

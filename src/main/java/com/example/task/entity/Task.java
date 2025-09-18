@@ -5,37 +5,63 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/**
+ * 'tasks' 데이터베이스 테이블과 매핑되는 JPA 엔티티 클래스입니다.
+ * Task 한 개의 정보를 나타냅니다.
+ */
 @Entity
-@Table(name = "tasks") // 데이터베이스 테이블 이름을 'tasks'로 지정
+@Table(name = "tasks")
 public class Task {
 
+    /**
+     * Task의 고유 식별자 (Primary Key) 입니다.
+     * IDENTITY 전략은 데이터베이스가 ID 생성을 책임지도록 합니다. (예: PostgreSQL의 SERIAL)
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 고유 ID
+    private Long id;
 
-    @Column(nullable = false)
-    private String title; // 제목
+    /** Task의 제목. null 값을 허용하지 않습니다. */
+    @Column(nullable = false, length = 255)
+    private String title;
 
-    @Column(length = 1000)
-    private String description; // 설명
+    /** Task의 상세 설명. */
+    @Column(length = 2000)
+    private String description;
 
+    /**
+     * Task의 현재 상태. Enum 타입이며, 데이터베이스에는 문자열(STRING)로 저장됩니다.
+     * 기본값으로 TaskStatus.TODO가 설정됩니다.
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus status = TaskStatus.TODO; // 상태 (기본값: TODO)
+    private TaskStatus status = TaskStatus.TODO;
 
-    private Integer priority; // 우선순위
+    /** Task의 우선순위. 숫자가 낮을수록 우선순위가 높음을 의미할 수 있습니다. */
+    private Integer priority;
 
-    private String assignee; // 담당자
+    /** Task를 담당하는 사용자의 이름. */
+    @Column(length = 100)
+    private String assignee;
 
-    @CreationTimestamp // 엔티티 생성 시각을 자동 기록
+    /**
+     * Task가 생성된 시각.
+     * @CreationTimestamp 어노테이션에 의해 엔티티가 처음 저장될 때 자동으로 현재 시각이 기록됩니다.
+     * updatable = false 설정은 이 필드가 수정되지 않도록 합니다.
+     */
+    @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp // 엔티티 수정 시각을 자동 기록
+    /**
+     * Task 정보가 마지막으로 수정된 시각.
+     * @UpdateTimestamp 어노테이션에 의해 엔티티가 수정될 때마다 자동으로 현재 시각이 기록됩니다.
+     */
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     // --- Getters and Setters ---
-    // Lombok 라이브러리를 사용하면 생략 가능합니다.
+    // 실제 프로젝트에서는 코드를 간결하게 하기 위해 Lombok 라이브러리 (@Getter, @Setter 등) 사용을 적극 권장합니다.
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -53,3 +79,4 @@ public class Task {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
+
