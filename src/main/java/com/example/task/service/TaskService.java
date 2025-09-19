@@ -5,6 +5,8 @@ import com.example.task.dto.TaskResponseDto;
 import com.example.task.entity.Task;
 import com.example.task.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,7 @@ public class TaskService {
      * @return TaskResponseDto 리스트
      */
     @Transactional(readOnly = true) // readOnly=true: 조회 성능을 최적화하는 트랜잭션 설정
+    @Cacheable(value = "tasks", key = "'all'")  // key 추가
     public List<TaskResponseDto> getAllTasks() {
         return taskRepository.findAll().stream()
                 .map(task -> new TaskResponseDto(task, getViewCount(task.getId())))

@@ -1,9 +1,14 @@
 package com.example.task.entity;
-
+import java.io.Serializable;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 'tasks' 데이터베이스 테이블과 매핑되는 JPA 엔티티 클래스입니다.
@@ -11,8 +16,14 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 @Table(name = "tasks")
-public class Task {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
+public class Task implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     /**
      * Task의 고유 식별자 (Primary Key) 입니다.
      * IDENTITY 전략은 데이터베이스가 ID 생성을 책임지도록 합니다. (예: PostgreSQL의 SERIAL)

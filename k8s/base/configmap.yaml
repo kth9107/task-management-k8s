@@ -3,36 +3,22 @@ kind: ConfigMap
 metadata:
   name: task-api-config
 data:
+  # application.yml 파일의 내용을 이곳에서 중앙 관리합니다.
   application.yml: |
     spring:
-      #datasource:
-        #url: jdbc:postgresql://postgres-service:5432/taskdb
-        #username: taskuser
+      datasource:
+        url: jdbc:postgresql://postgres-service:5432/taskdb
       redis:
         host: redis-service
         port: 6379
-        # 연결 시도 시간 제한 (5초)
         connect-timeout: 5s
-        # Lettuce 클라이언트 설정
         lettuce:
           pool:
-            # 커넥션 풀 최대 개수
             max-active: 8
-            # 풀이 비었을 때 대기 시간
             max-wait: 1s
       jpa:
         hibernate:
           ddl-auto: update
-        #show-sql: false
     server:
       port: 8080
-    management:
-      endpoints:
-        web:
-          exposure:
-            include: health,tasks
-      health:
-        readiness:
-          enabled: true
-        liveness:
-          enabled: true
+

@@ -1,14 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  # Deployment와 Service의 이름이 겹치지 않도록 명확하게 변경합니다.
+  name: redis-deployment
 spec:
   replicas: 1
-    # 이 selector는 아래 template의 labels와 일치해야 함
   selector:
     matchLabels:
       app: redis
-  # --- Pod Template ---      
   template:
     metadata:
       labels:
@@ -19,18 +18,24 @@ spec:
         image: redis:7-alpine
         ports:
         - containerPort: 6379
-        # Redis가 준비되었는지 확인하는 health check 추가
+        # --- CPU / 메모리 리소스 설정 ---
         resources:
-          tcpSocket:
-            port: 6379
-          initialDelaySeconds: 5
-          periodSeconds: 10
           requests:
             memory: "64Mi"
             cpu: "50m"
           limits:
             memory: "128Mi"
             cpu: "100m"
+        # ★★★ readinessProbe를 추가하여 헬스 체크를 정의합니다. ★★★
+        # 이 파드가 외부 요청을 받을 준비가 되었는지 확인합니다.
+        readinessProbe:
+          # 6379 포트에 TCP 연결을 시도하여 성공하면 준비된 것으로 간주합니다.
+          tcpSocket:
+            port: 6379
+          # 컨테이너가 시작되고 5초 후에 첫 검사를 시작합니다.
+          initialDelaySeconds: 5
+          # 10초마다 검사를 반복합니다.
+          periodSeconds: 10
 ---
 # --- Redis Service ---
 apiVersion: v1
