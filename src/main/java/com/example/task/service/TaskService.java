@@ -6,6 +6,7 @@ import com.example.task.entity.Task;
 import com.example.task.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -46,10 +47,8 @@ public class TaskService {
      */
     @Transactional(readOnly = true) // readOnly=true: 조회 성능을 최적화하는 트랜잭션 설정
     @Cacheable(value = "tasks", key = "'all'")  // key 추가
-    public List<TaskResponseDto> getAllTasks() {
-        return taskRepository.findAll().stream()
-                .map(task -> new TaskResponseDto(task, getViewCount(task.getId())))
-                .collect(Collectors.toList());
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
 
     /**
@@ -74,15 +73,9 @@ public class TaskService {
      * @return 생성된 Task의 정보 (조회수는 0)
      */
     @Transactional // 데이터를 변경하므로 readOnly가 아닌 일반 트랜잭션 사용
-    public TaskResponseDto createTask(TaskRequestDto requestDto) {
-        Task task = new Task();
-        updateTaskFromDto(task, requestDto);
-        if(task.getStatus() == null) {
-            task.setStatus(com.example.task.entity.TaskStatus.TODO); // 생성 시 기본 상태를 TODO로 설정
-        }
-
-        Task savedTask = taskRepository.save(task);
-        return new TaskResponseDto(savedTask, 0L); // 새로 생성된 Task의 조회수는 0입니다.
+    @CacheEvict(value = "tasks", key = "'all'")  // getAllTasks 캐시 무효화
+    public Task createTask(Task task) {
+        return taskRepository.save(task);
     }
 
     /**
@@ -158,7 +151,7 @@ public class TaskService {
      * @param taskId 조회수를 가져올 Task의 ID
      * @return 조회수 (Long 타입)
      */
-    private Long getViewCount(Long taskId) {
+    public Long getViewCount(Long taskId) {
         String key = VIEW_COUNT_KEY_PREFIX + taskId;
         String countStr = redisTemplate.opsForValue().get(key);
         return countStr == null ? 0L : Long.parseLong(countStr);

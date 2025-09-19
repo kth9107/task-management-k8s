@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   # Deployment와 Service의 이름이 겹치지 않도록 명확하게 변경합니다.
-  name: redis-deployment
+  name: redis
 spec:
   replicas: 1
   selector:
