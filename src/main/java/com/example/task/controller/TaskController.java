@@ -77,6 +77,7 @@ public class TaskController {
                     // TaskService의 getViewCount가 private이라 호출할 수 없으므로,
                     // 목록 조회 시에는 조회수를 0으로 가정하여 응답 DTO를 생성합니다.
                     // 상세 조회(getTaskById) 시에는 서비스에서 처리하므로 실제 조회수가 보입니다.
+                    // 주석 수정
                     return new TaskResponseDto(task, 0L);
                 })
                 .collect(Collectors.toList());
