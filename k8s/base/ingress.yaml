@@ -16,4 +16,4 @@ spec:
           service:
             name: task-api-service
             port:
-              number: 80bash# 적용
+              number: 80
